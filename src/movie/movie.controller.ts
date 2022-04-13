@@ -39,10 +39,15 @@ export class MovieController {
     return this.movieService.getMovies(search);
   }
 
-  @Post('/update-count-opened')
+  @Post('update-count-opened')
   @HttpCode(200)
   async updateCountOpened(@Body('slug') slug: string) {
     return this.movieService.updateCountOpened(slug);
+  }
+
+  @Get('most-popular')
+  async getMostPopularMovie() {
+    return await this.movieService.getMostPopularMovie();
   }
 
   @Get(':id')

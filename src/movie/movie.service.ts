@@ -4,8 +4,15 @@ import { CreateMovieDto } from './dto/create.movie.dto';
 import { MovieEntity } from './movie.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Like, Repository, DeleteResult } from 'typeorm';
-import { MOVIE_NOT_FOUND_ERROR } from './errors/movie.error.constants';
+import {
+  In,
+  Like,
+  Repository,
+  DeleteResult,
+  MoreThan,
+  MoreThanOrEqual,
+} from 'typeorm';
+import { MOVIE_NOT_FOUND_ERROR } from './movie.error.constants';
 
 @Injectable()
 export class MovieService {
@@ -31,6 +38,15 @@ export class MovieService {
     return await this.movieRepo.find(options);
   }
 
+  async getMostPopularMovie(): Promise<MovieEntity[]> {
+    const movies = await this.movieRepo.find({
+      where: { count_opened: MoreThanOrEqual(0) },
+      order: { count_opened: -1 }
+    });
+
+    return movies;
+  }
+
   async updateCountOpened(slug: string) {
     const movie = await this.findBySlug(slug);
     movie.count_opened++;
@@ -39,14 +55,19 @@ export class MovieService {
   }
 
   async findByActor(actorId: number): Promise<MovieEntity[]> {
-    const actor = await this.actorRepo.findOne(actorId, {relations: ['movies']});
+    const actor = await this.actorRepo.findOne(actorId, {
+      relations: ['movies'],
+    });
 
     return actor.movies;
   }
 
   async findByGenres(genresIds: number[]) {
-    const genres = await this.genreRepo.find({ where: { id: In(genresIds) }, relations: ['movies'] });
-    return genres.map(genre => genre.movies)[0] ?? [];
+    const genres = await this.genreRepo.find({
+      where: { id: In(genresIds) },
+      relations: ['movies'],
+    });
+    return genres.map((genre) => genre.movies)[0] ?? [];
   }
 
   async findBySlug(slug: string): Promise<MovieEntity> {
@@ -93,7 +114,7 @@ export class MovieService {
 
     return await this.movieRepo.save(movie);
   }
-  
+
   async delete(id: number): Promise<DeleteResult> {
     return await this.movieRepo.delete(id);
   }
