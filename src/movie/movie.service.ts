@@ -47,6 +47,13 @@ export class MovieService {
     return movies;
   }
 
+  async updateMovieRating(id: number, rating: number) {
+    const movie = await this.findById(id);
+    movie.rating = rating;
+
+    return await this.movieRepo.save(movie);
+  }
+
   async updateCountOpened(slug: string) {
     const movie = await this.findBySlug(slug);
     movie.count_opened++;
