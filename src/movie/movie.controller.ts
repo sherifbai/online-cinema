@@ -8,6 +8,8 @@ import {
   Param,
   Post,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create.movie.dto';
 
@@ -56,6 +58,7 @@ export class MovieController {
     return this.movieService.findById(id);
   }
 
+  @UsePipes(new ValidationPipe())
   @Post()
   @Roles('admin')
   async create(@Body() createMovieDto: CreateMovieDto) {

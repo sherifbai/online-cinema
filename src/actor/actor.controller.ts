@@ -13,6 +13,8 @@ import {
   Post,
   Put,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Roles } from 'src/auth/decorators/auth.decorator';
 import { ActorService } from './actor.service';
@@ -41,6 +43,7 @@ export class ActorController {
     return { actor: await this.actorService.findById(id) };
   }
 
+  @UsePipes(new ValidationPipe())
   @Roles('admin')
   @Post()
   async create(
@@ -49,6 +52,7 @@ export class ActorController {
     return { actor: await this.actorService.create(createActorDto) };
   }
 
+  @UsePipes(new ValidationPipe())
   @Roles('admin')
   @HttpCode(200)
   @Put(':id')
