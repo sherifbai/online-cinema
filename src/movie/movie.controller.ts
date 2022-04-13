@@ -7,6 +7,7 @@ import {
   HttpCode,
   Param,
   Post,
+  Put,
   Query,
   UsePipes,
   ValidationPipe,
@@ -63,5 +64,14 @@ export class MovieController {
   @Roles('admin')
   async create(@Body() createMovieDto: CreateMovieDto) {
     return this.movieService.create(createMovieDto);
+  }
+
+  @Put('update-rating/:id')
+  @Roles('admin')
+  async updateMovieRating(
+    @Param('id') id: number,
+    @Body('rating') rating: number,
+  ) {
+    return await this.movieService.updateMovieRating(id, rating);
   }
 }
