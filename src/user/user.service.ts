@@ -1,3 +1,4 @@
+import { MovieEntity } from 'src/movie/movie.entity';
 import { UpdateProfile } from './dto/update.profile';
 import { UserEntity } from './user.entity';
 import {
@@ -12,16 +13,23 @@ import {
   ALREADY_EXIST_EMAIL_ERROR,
   USER_NOT_FOUND_ERROR,
 } from './errors.constants';
+import { MOVIE_NOT_FOUND_ERROR } from 'src/movie/movie.error.constants';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepo: Repository<UserEntity>,
+    @InjectRepository(MovieEntity)
+    private readonly movieRepo: Repository<MovieEntity>,
   ) {}
 
   async getProfile(id: number): Promise<UserEntity> {
-    const user = this.userRepo.findOne({ where: { id } });
+    const user = await this.userRepo.findOne({
+      where: { id },
+      relations: ['movies'],
+    });
+    console.log(id);
     if (!user) {
       throw new NotFoundException(USER_NOT_FOUND_ERROR);
     }
@@ -63,7 +71,7 @@ export class UserService {
 
     if (search) {
       options = {
-        where: [{ email: Like(`%${search}%`) }]
+        where: [{ email: Like(`%${search}%`) }],
       };
     }
 
@@ -72,5 +80,32 @@ export class UserService {
 
   async deleteProfile(id: number): Promise<DeleteResult> {
     return this.userRepo.delete(id);
+  }
+
+  async addToFavorite(
+    movieId: number,
+    { id }: UserEntity,
+  ): Promise<UserEntity> {
+    const movie = await this.movieRepo.findOne({ where: { id: movieId } });
+    if (!movie) {
+      throw new NotFoundException(MOVIE_NOT_FOUND_ERROR);
+    }
+    
+    const user = await this.userRepo.findOne({
+      where: { id },
+      relations: ['movies'],
+    });
+
+    user.movies = [movie];
+
+    return await this.userRepo.save(user);
+  }
+
+  async favorites({ id }: UserEntity): Promise<MovieEntity[]> {
+    const movies = await this.movieRepo.find({
+      where: { user_id: id },
+      relations: ['actors', 'genres'],
+    });
+    return movies;
   }
 }

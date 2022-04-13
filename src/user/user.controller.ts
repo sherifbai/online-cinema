@@ -22,7 +22,7 @@ import { User } from './decorators/user.decorator';
 import { Roles } from 'src/auth/decorators/auth.decorator';
 import { IGetUserResponse } from './types/get.user.interface';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -40,6 +40,7 @@ export class UserController {
     @User('id') { id }: UserEntity,
     @Body() { email, password, is_admin }: UpdateProfile,
   ): Promise<IUpdatedProfileResponse> {
+    console.log('profile');
     const user = await this.userService.updateProfile(id, {
       email,
       password,
@@ -53,6 +54,13 @@ export class UserController {
   async getAllUsers(@Query('search') search?: string): Promise<IGetUsersResponse> {
     const users = await this.userService.getAllUsers(search);
     return { users };
+  }
+
+  @Get('count')
+  @Roles('admin')
+  async getCountUsers(): Promise<ICountUserResponse> {
+    const counts = await this.userService.getCountUsers();
+    return { user_counts: counts };
   }
 
   @Get(':id')
@@ -70,6 +78,7 @@ export class UserController {
     @Param('id') id: number,
     @Body() { email, password, is_admin }: UpdateProfile,
   ): Promise<IUpdatedUserResponse> {
+    console.log('user');
     const user = await this.userService.updateProfile(id, {
       email,
       password,
@@ -78,17 +87,23 @@ export class UserController {
     return { updated_user: user };
   }
 
-  @Get('count')
-  @Roles('admin')
-  async getCountUsers(): Promise<ICountUserResponse> {
-    const counts = await this.userService.getCountUsers();
-    return { user_counts: counts };
-  }
-
   @Delete(':id')
   @Roles('admin')
   async deleteProfile(@Param('id') id: number): Promise<DeleteResult> {
     await this.userService.getProfile(id);
     return this.userService.deleteProfile(id);
+  }
+
+  @Put('profile/favorite')
+  @HttpCode(200)
+  @Roles('user')
+  async addToFavorite(@Body('movieId') id: number, @User() user: UserEntity) {
+    return this.userService.addToFavorite(id, user);
+  }
+
+  @Get('profile/favorites')
+  @Roles('user')
+  async favorites(@User() user: UserEntity) {
+    return await this.userService.favorites(user);
   }
 }

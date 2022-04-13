@@ -10,5 +10,6 @@ import { Module } from '@nestjs/common';
   imports: [TypeOrmModule.forFeature([ MovieEntity, ActorEntity, GenreEntity ])],
   controllers: [MovieController],
   providers: [MovieService],
+  exports: [TypeOrmModule.forFeature([MovieEntity])],
 })
 export class MovieModule {}

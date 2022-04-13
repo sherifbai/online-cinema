@@ -1,6 +1,7 @@
+import { UserEntity } from './../user/user.entity';
 import { GenreEntity } from './../genre/genre.entity';
 import { ActorEntity } from './../actor/actor.entity';
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export class Parameters {
   @Column()
@@ -52,6 +53,10 @@ export class MovieEntity {
   @ManyToMany(() => GenreEntity, genres => genres.id, { cascade: true })
   @JoinTable({ name: 'movies_genres' })
   genres: GenreEntity[];
+
+  @ManyToOne(() => UserEntity, user_id => user_id.id, { cascade: true })
+  @JoinColumn({name : 'user_id'})
+  user_id: UserEntity;
 
   @Column({ default: false })
   is_send_telegram?: boolean;
