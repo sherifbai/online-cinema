@@ -11,7 +11,7 @@ import { genSaltSync, hash } from 'bcrypt';
 import {
   ALREADY_EXIST_EMAIL_ERROR,
   USER_NOT_FOUND_ERROR,
-} from './errors/errors.constants';
+} from './errors.constants';
 
 @Injectable()
 export class UserService {

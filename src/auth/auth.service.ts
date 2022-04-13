@@ -7,7 +7,7 @@ import { compare, genSalt, hash } from 'bcrypt';
 import {
   USER_NOT_FOUND_ERROR,
   WRONG_PASSWORD_ERROR,
-} from './errors/auth.errors.constants';
+} from './auth.errors.constants';
 import { JwtService } from '@nestjs/jwt';
 import { ITokenResponse } from './types/token.response.interface';
 

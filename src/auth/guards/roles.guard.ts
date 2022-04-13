@@ -1,7 +1,7 @@
 import { UserEntity } from './../../user/user.entity';
 import { CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { HAVE_NOT_PERMISSION_ERROR } from '../errors/auth.errors.constants';
+import { HAVE_NOT_PERMISSION_ERROR } from '../auth.errors.constants';
 
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}

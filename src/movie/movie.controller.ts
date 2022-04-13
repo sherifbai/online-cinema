@@ -42,7 +42,7 @@ export class MovieController {
     return this.movieService.getMovies(search);
   }
 
-  @Post('update-count-opened')
+  @Put('update-count-opened')
   @HttpCode(200)
   async updateCountOpened(@Body('slug') slug: string) {
     return this.movieService.updateCountOpened(slug);

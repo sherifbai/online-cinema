@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
-import { USER_EXIST_ERROR } from './errors/auth.errors.constants';
+import { USER_EXIST_ERROR } from './auth.errors.constants';
 import { IUserResponse } from './types/user.response.interface';
 import { Roles } from './decorators/auth.decorator';
 
