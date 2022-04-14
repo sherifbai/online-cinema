@@ -90,13 +90,26 @@ export class UserService {
     if (!movie) {
       throw new NotFoundException(MOVIE_NOT_FOUND_ERROR);
     }
-    
+
     const user = await this.userRepo.findOne({
       where: { id },
       relations: ['movies'],
     });
 
-    user.movies = [movie];
+    user.movies = [...user.movies, movie];
+
+    return await this.userRepo.save(user);
+  }
+
+  async deleteFromFavorites(
+    movieId: number,
+    { id }: UserEntity,
+  ) {
+    const user = await this.userRepo.findOne({ where: { id }, relations: ['movies'] });
+
+    user.movies = user.movies.filter((movie) => {
+      return !(movieId === movie.id);
+    });
 
     return await this.userRepo.save(user);
   }

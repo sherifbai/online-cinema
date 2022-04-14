@@ -98,7 +98,14 @@ export class UserController {
   @HttpCode(200)
   @Roles('user')
   async addToFavorite(@Body('movieId') id: number, @User() user: UserEntity) {
-    return this.userService.addToFavorite(id, user);
+    return await this.userService.addToFavorite(id, user);
+  }
+
+  @Delete('profile/favorite')
+  @HttpCode(200)
+  @Roles('user')
+  async deleteFromFavorite(@Body('movieId') id: number, @User() user: UserEntity) {
+    return await this.userService.deleteFromFavorites(id, user);
   }
 
   @Get('profile/favorites')
